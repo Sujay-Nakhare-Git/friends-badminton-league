@@ -131,7 +131,7 @@ const createRoundRobinSchedule = (teams: Team[]): Match[] => {
     return []
   }
 
-  const placeholders = teams.map((team) => team.id)
+  const placeholders = teams.map((team: Team) => team.id)
   const hasBye = placeholders.length % 2 === 1
 
   if (hasBye) {
@@ -207,7 +207,7 @@ const App = () => {
   }, [teams, matches])
 
   const teamMap = useMemo(() => {
-    return new Map(teams.map((team) => [team.id, team]))
+    return new Map(teams.map((team: Team) => [team.id, team]))
   }, [teams])
 
   const rounds = useMemo(() => {
@@ -222,7 +222,7 @@ const App = () => {
   }, [matches])
 
   const standings = useMemo<Standing[]>(() => {
-    const base = teams.map((team) => ({
+    const base = teams.map((team: Team) => ({
       teamId: team.id,
       teamName: getTeamLabel(team),
       played: 0,
@@ -234,7 +234,7 @@ const App = () => {
       tablePoints: 0,
     }))
 
-    const table = new Map(base.map((entry) => [entry.teamId, entry]))
+    const table = new Map(base.map((entry: Standing) => [entry.teamId, entry]))
 
     matches.forEach((match) => {
       if (!match.completed) {
@@ -269,7 +269,7 @@ const App = () => {
     })
 
     return Array.from(table.values())
-      .map((entry) => ({
+      .map((entry: Standing) => ({
         ...entry,
         difference: entry.pointsFor - entry.pointsAgainst,
       }))
@@ -404,7 +404,7 @@ const App = () => {
     }
 
     setMatches((current) =>
-      current.map((match) => {
+      current.map((match: Match) => {
         if (match.id !== matchId) {
           return match
         }
@@ -463,7 +463,7 @@ const App = () => {
                     <input
                       type="text"
                       value={adminForm.username}
-                      onChange={(event) =>
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                         setAdminForm((current) => ({ ...current, username: event.target.value }))
                       }
                       placeholder="admin (optional)"
@@ -474,7 +474,7 @@ const App = () => {
                     <input
                       type="password"
                       value={adminForm.password}
-                      onChange={(event) =>
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                         setAdminForm((current) => ({ ...current, password: event.target.value }))
                       }
                       placeholder="Enter password"
@@ -543,7 +543,7 @@ const App = () => {
                 <input
                   type="text"
                   value={form.playerOne}
-                  onChange={(event) =>
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                     setForm((current) => ({ ...current, playerOne: event.target.value }))
                   }
                   placeholder="Alex"
@@ -554,7 +554,7 @@ const App = () => {
                 <input
                   type="text"
                   value={form.playerTwo}
-                  onChange={(event) =>
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                     setForm((current) => ({ ...current, playerTwo: event.target.value }))
                   }
                   placeholder="Jordan"
@@ -572,7 +572,7 @@ const App = () => {
             {teams.length === 0 ? (
               <p className="empty-state">No teams yet. Add a team or load the demo setup.</p>
             ) : (
-              teams.map((team) => (
+              teams.map((team: Team) => (
                 <article className="team-card" key={team.id}>
                   <div>
                     <h3>{getTeamLabel(team)}</h3>
@@ -605,13 +605,13 @@ const App = () => {
             {matches.length === 0 ? (
               <p className="empty-state">Generate a schedule to start entering scores.</p>
             ) : (
-              Object.entries(rounds)
+              (Object.entries(rounds) as [string, Match[]][])
                 .sort(([left], [right]) => Number(left) - Number(right))
-                .map(([round, roundMatches]) => (
+                .map(([round, roundMatches]: [string, Match[]]) => (
                   <div className="round-card" key={round}>
                     <h3>Round {round}</h3>
                     <div className="match-list">
-                      {roundMatches.map((match) => {
+                      {roundMatches.map((match: Match) => {
                         const teamA = teamMap.get(match.teamAId)
                         const teamB = teamMap.get(match.teamBId)
 
@@ -629,7 +629,7 @@ const App = () => {
                                   inputMode="numeric"
                                   placeholder="0"
                                   value={match.scoreA}
-                                  onChange={(event) =>
+                                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                     handleScoreChange(match.id, 'scoreA', event.target.value)
                                   }
                                 />
@@ -643,7 +643,7 @@ const App = () => {
                                   inputMode="numeric"
                                   placeholder="0"
                                   value={match.scoreB}
-                                  onChange={(event) =>
+                                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                                     handleScoreChange(match.id, 'scoreB', event.target.value)
                                   }
                                 />
@@ -696,7 +696,7 @@ const App = () => {
                   </td>
                 </tr>
               ) : (
-                standings.map((entry, index) => (
+                standings.map((entry: Standing, index: number) => (
                   <tr key={entry.teamId}>
                     <td>{index + 1}</td>
                     <td>{entry.teamName}</td>
