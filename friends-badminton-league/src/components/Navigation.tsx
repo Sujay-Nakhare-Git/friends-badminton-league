@@ -8,6 +8,7 @@ export function Navigation() {
   const { isAdmin, login, logout } = useAdmin()
   const [adminForm, setAdminForm] = useState<AdminForm>(emptyAdminForm)
   const [message, setMessage] = useState<string>('')
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   const handleAdminLogin = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -16,6 +17,7 @@ export function Navigation() {
     if (success) {
       setAdminForm(emptyAdminForm)
       setMessage('Admin access granted.')
+      setShowLoginModal(false)
     } else {
       setMessage('Invalid admin username or password.')
     }
@@ -50,49 +52,76 @@ export function Navigation() {
                 <button className="ghost-button" type="button" onClick={handleAdminLogout}>
                   Logout
                 </button>
-              ) : null}
+              ) : (
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={() => {
+                    setMessage('')
+                    setShowLoginModal(true)
+                  }}
+                >
+                  Admin login
+                </button>
+              )}
             </div>
 
             {isAdmin ? (
               <p className="access-copy">You can manage teams, fixtures, and scores.</p>
             ) : (
-              <>
-                <p className="access-copy">
-                  Visitors can view results and standings. Sign in as admin to edit tournament data.
-                </p>
-                <form className="admin-form" onSubmit={handleAdminLogin}>
-                  <label>
-                    Username
-                    <input
-                      type="text"
-                      value={adminForm.username}
-                      onChange={(event) =>
-                        setAdminForm((current) => ({ ...current, username: event.target.value }))
-                      }
-                      placeholder="admin (optional)"
-                    />
-                  </label>
-                  <label>
-                    Password
-                    <input
-                      type="password"
-                      value={adminForm.password}
-                      onChange={(event) =>
-                        setAdminForm((current) => ({ ...current, password: event.target.value }))
-                      }
-                      placeholder="Enter password"
-                    />
-                  </label>
-                  <button className="primary-button" type="submit">
-                    Admin login
-                  </button>
-                </form>
-              </>
+              <p className="access-copy">
+                Visitors can view results and standings. Use the login button to access admin features.
+              </p>
             )}
           </div>
         </div>
       </div>
-      {message && <div className="nav-message">{message}</div>}
+      {message && !showLoginModal && <div className="nav-message">{message}</div>}
+
+      {showLoginModal && (
+        <div className="modal-overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="modal" onClick={(event) => event.stopPropagation()}>
+            <button
+              className="modal-close"
+              type="button"
+              onClick={() => setShowLoginModal(false)}
+              aria-label="Close login dialog"
+            >
+              ×
+            </button>
+            <h2>Admin Login</h2>
+            <form className="admin-form" onSubmit={handleAdminLogin}>
+              <label>
+                Username
+                <input
+                  type="text"
+                  value={adminForm.username}
+                  onChange={(event) =>
+                    setAdminForm((current) => ({ ...current, username: event.target.value }))
+                  }
+                  placeholder="admin"
+                  autoFocus
+                />
+              </label>
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={adminForm.password}
+                  onChange={(event) =>
+                    setAdminForm((current) => ({ ...current, password: event.target.value }))
+                  }
+                  placeholder="Enter password"
+                />
+              </label>
+              <button className="primary-button" type="submit">
+                Sign in
+              </button>
+            </form>
+            {message && <p className="modal-message">{message}</p>}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }

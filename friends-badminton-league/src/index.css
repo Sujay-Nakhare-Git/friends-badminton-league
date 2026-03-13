@@ -527,6 +527,62 @@ th {
   backdrop-filter: blur(14px);
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 200;
+}
+
+.modal {
+  width: min(480px, 100%);
+  background: rgba(9, 18, 35, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+}
+
+.modal h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #f8fbff;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: transparent;
+  color: #f8fbff;
+  font-size: 1.25rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-close:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.modal-message {
+  margin-top: 1rem;
+  text-align: center;
+  color: #f1f5f9;
+  font-size: 0.9rem;
+}
+
 /* Main content */
 .main-content {
   padding: 0 2rem;
