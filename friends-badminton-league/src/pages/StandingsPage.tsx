@@ -3,11 +3,8 @@ import { STORAGE_KEY, getTeamLabel, getHeadToHeadWinner } from '../utils'
 import type { Team, Match, Standing } from '../types'
 
 function parseScore(score: string): number {
-  const parts = score.split('-')
-  if (parts.length !== 2) return 0
-  const first = parseInt(parts[0], 10)
-  const second = parseInt(parts[1], 10)
-  return isNaN(first) || isNaN(second) ? 0 : first - second
+  const numScore = parseInt(score, 10)
+  return isNaN(numScore) ? 0 : numScore
 }
 
 export function StandingsPage() {
@@ -39,22 +36,26 @@ export function StandingsPage() {
 
       if (!teamAStats || !teamBStats) return
 
-      const scoreDiffA = parseScore(match.scoreA)
-      const scoreDiffB = parseScore(match.scoreB)
+      const scoreA = parseScore(match.scoreA)
+      const scoreB = parseScore(match.scoreB)
 
-      if (scoreDiffA > scoreDiffB) {
+      // Determine winner based on higher score
+      if (scoreA > scoreB) {
         teamAStats.wins++
         teamBStats.losses++
-      } else if (scoreDiffB > scoreDiffA) {
+      } else if (scoreB > scoreA) {
         teamBStats.wins++
         teamAStats.losses++
       }
+      // If scores are equal, it's a draw - no wins/losses recorded
 
-      teamAStats.scoreDiff += scoreDiffA
-      teamBStats.scoreDiff += scoreDiffB
+      // Calculate score difference for tie-breaking
+      const scoreDiff = scoreA - scoreB
+      teamAStats.scoreDiff += scoreDiff
+      teamBStats.scoreDiff -= scoreDiff
 
-      teamAStats.headToHead.set(match.teamBId, scoreDiffA - scoreDiffB)
-      teamBStats.headToHead.set(match.teamAId, scoreDiffB - scoreDiffA)
+      teamAStats.headToHead.set(match.teamBId, scoreDiff)
+      teamBStats.headToHead.set(match.teamAId, -scoreDiff)
     })
 
     return Array.from(teamStats.entries())

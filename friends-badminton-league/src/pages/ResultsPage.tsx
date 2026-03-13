@@ -27,8 +27,8 @@ export function ResultsPage() {
   const handleScoreChange = (matchId: string, team: 'A' | 'B', score: string) => {
     if (!isAdmin) return
 
-    setMatches((previousMatches) =>
-      previousMatches.map((match) =>
+    setMatches((previousMatches) => {
+      const updatedMatches = previousMatches.map((match) =>
         match.id === matchId
           ? {
               ...match,
@@ -36,7 +36,22 @@ export function ResultsPage() {
             }
           : match
       )
-    )
+
+      // Auto-save to localStorage
+      localStorage.setItem(`${STORAGE_KEY}-matches`, JSON.stringify(updatedMatches))
+
+      // Auto-complete match if both scores are entered
+      const updatedMatch = updatedMatches.find(m => m.id === matchId)
+      if (updatedMatch && updatedMatch.scoreA.trim() && updatedMatch.scoreB.trim()) {
+        const finalMatches = updatedMatches.map(m =>
+          m.id === matchId ? { ...m, completed: true } : m
+        )
+        localStorage.setItem(`${STORAGE_KEY}-matches`, JSON.stringify(finalMatches))
+        return finalMatches
+      }
+
+      return updatedMatches
+    })
   }
 
   const handleCompleteMatch = (matchId: string) => {
@@ -114,12 +129,9 @@ export function ResultsPage() {
                         />
                       </div>
                       {isAdmin && (
-                        <button
-                          className="complete-button"
-                          onClick={() => handleCompleteMatch(match.id)}
-                        >
-                          Mark Complete
-                        </button>
+                        <p className="auto-save-note">
+                          Match will be automatically saved and marked as completed when both scores are entered.
+                        </p>
                       )}
                     </article>
                   )
@@ -157,14 +169,6 @@ export function ResultsPage() {
                 })}
               </div>
             </section>
-          )}
-
-          {isAdmin && pendingMatches.length > 0 && (
-            <div className="save-section">
-              <button className="save-button" onClick={handleSaveResults}>
-                Save All Results
-              </button>
-            </div>
           )}
         </>
       )}
