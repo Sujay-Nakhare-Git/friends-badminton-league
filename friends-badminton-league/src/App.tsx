@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 
 type Team = {
   id: string
@@ -222,7 +222,7 @@ const App = () => {
   }, [matches])
 
   const standings = useMemo<Standing[]>(() => {
-    const base = teams.map((team: Team) => ({
+    const base: Standing[] = teams.map((team: Team) => ({
       teamId: team.id,
       teamName: getTeamLabel(team),
       played: 0,
@@ -234,7 +234,7 @@ const App = () => {
       tablePoints: 0,
     }))
 
-    const table = new Map(base.map((entry: Standing) => [entry.teamId, entry]))
+    const table: Map<string, Standing> = new Map(base.map((entry: Standing) => [entry.teamId, entry]))
 
     matches.forEach((match) => {
       if (!match.completed) {
@@ -268,8 +268,8 @@ const App = () => {
       }
     })
 
-    return Array.from(table.values())
-      .map((entry: Standing) => ({
+    return (Array.from(table.values()) as Standing[])
+      .map((entry) => ({
         ...entry,
         difference: entry.pointsFor - entry.pointsAgainst,
       }))
